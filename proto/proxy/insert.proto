@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proxy;
+
+option go_package = "proto/proxy";
+
+// Insert RPC messages
+message InsertRequest {
+  string db = 1;
+  string collection = 2;
+  repeated bytes documents = 3;
+}
+
+message InsertResponse {
+  bool success = 1;
+}

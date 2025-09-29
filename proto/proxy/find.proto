@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proxy;
+
+option go_package = "proto/proxy";
+
+// Find RPC messages
+message FindRequest {
+  string db = 1;
+  string collection = 2;
+  bytes filterBson = 3; // raw BSON filter
+}
+
+message FindResponse {
+  repeated bytes documents = 1;
+}
