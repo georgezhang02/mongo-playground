@@ -16,25 +16,21 @@ type Client struct {
 }
 
 // Connect dials a gRPC server at target, e.g., "localhost:50051".
-func (c *Client) Connect(target string, opts ...grpc.DialOption) error {
+func NewClient(target string, opts ...grpc.DialOption) (*Client, error) {
 	if len(opts) == 0 {
 		opts = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())} // for local dev; consider TLS for production
 	}
 	conn, err := grpc.NewClient(target, opts...)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	c.conn = conn
-	c.client = pb.NewMongoProxyClient(conn)
-	return nil
+	client := pb.NewMongoProxyClient(conn)
+	return &Client{conn: conn, client: client}, nil
 }
 
 // Close closes the underlying client connection.
 func (c *Client) Close() error {
-	if c.conn != nil {
-		return c.conn.Close()
-	}
-	return nil
+	return c.conn.Close()
 }
 
 // Insert forwards an Insert RPC.

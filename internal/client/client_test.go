@@ -7,9 +7,6 @@ import (
 
 	"mongo-playground/internal/proxy"
 	pb "mongo-playground/proto/proxy"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestClient_InsertAndFind(t *testing.T) {
@@ -21,12 +18,11 @@ func TestClient_InsertAndFind(t *testing.T) {
 	t.Cleanup(srv.Stop)
 
 	// Create a client
-	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	client, err := NewClient(addr)
 	if err != nil {
 		t.Fatalf("failed NewClient: %v", err)
 	}
-	t.Cleanup(func() { _ = conn.Close() })
-	client := pb.NewMongoProxyClient(conn)
+	t.Cleanup(func() { client.Close() })
 
 	// Create a context
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
